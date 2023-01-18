@@ -93,48 +93,49 @@ const objectShop = {
     showList: function(category) {
         let list;
 
-        if (!category) { list = this.goods; }
+        if (!category) { 
+            list = this.goods; 
+        }
         else {
-            let preList = [];
-            for (let i = 0; i < this.goods.length; i++) {
-                preList[i] = this.goods[i].category;
-            }
-            list = preList.filter(function(el, i, arr) {
-                return el.toLowerCase() == category.toLowerCase();
+            // let preList = [];
+            // for (let i = 0; i < this.goods.length; i++) {
+            //     preList[i] = this.goods[i].category;
+            // }
+            list = this.goods.filter(function(el, i, arr) {
+                return el.category.toLowerCase() == category.toLowerCase();
             });
 
-            if ( !list.length ) list = 'Такой категории нет';
+            if ( !list.length ) {
+                list = 'Такой категории нет';
+            }
         }
         return list;
     },
 
     addToCart: function(id) {
-        let item = goods.find(function(goodId) {
-            return goodId[0] == id;
+        let item = this.goods.find(function(el) {
+            return el.id == id;
         });
 
         if (item) {
-            cart.push(item.map(function(el) {
-                return el;
-            }));
-            return `В корзину добавлен товар '${item[2]}'`;
+            // TODO: check this after cart summ, we maped item, because link [] = link [], but now its an object
+            // this.cart.push(item.map(function(el) {
+            //     return el;
+            // }));
+            this.cart.push(item);
+            return `В корзину добавлен товар '${item.name}'`;
         } else {
             return 'Товар не найден!';
         }
     },
     
 
-
-
-
 };
 
 objectShop.user = prompt('Добрый день, представьтесь пожалуйста :)') || 'Сеньор(-ита)';
 console.log(objectShop.user);
 
-console.log(objectShop.showList('Процессоры'));
-
-
+console.log(objectShop.showList());
 
 
 
@@ -248,3 +249,4 @@ console.log(objectShop.showList('Процессоры'));
 // addToCart('1tgy');
 
 // calcDiscount();
+
