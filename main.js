@@ -35,7 +35,7 @@
 
 const objectShop = {
     user: '',
-    money: 2000,
+    money: 10000,
     cart: [],
     discount: .13,
 
@@ -97,10 +97,6 @@ const objectShop = {
             list = this.goods; 
         }
         else {
-            // let preList = [];
-            // for (let i = 0; i < this.goods.length; i++) {
-            //     preList[i] = this.goods[i].category;
-            // }
             list = this.goods.filter(function(el, i, arr) {
                 return el.category.toLowerCase() == category.toLowerCase();
             });
@@ -128,125 +124,117 @@ const objectShop = {
             return 'Товар не найден!';
         }
     },
-    
 
+    removeFromCart: function(id) {
+        let item = this.cart.find(function(el) {
+            return el.id == id;
+        });
+        
+        let index = this.cart.indexOf(item);
+
+        if(index >=0) {
+            this.cart.splice(index, 1);
+        } else {
+            return 'Такого товара нет в корзине, повторите запрос!'
+        }
+    },
+
+    clearCart() {
+        this.cart = [];
+    },
+
+    showCart() {
+        return this.cart;
+    },
+
+    roundTo(num, n = 2) {
+        return Math.round( num * (10 ** parseInt(n)) ) / (10 ** parseInt(n));
+    },
+
+    cupit() {
+        this.calcDiscount();
+
+        let infoList = this.cart.map(function(el) {
+        return `${el.name} | $${el.price}`;
+        }).join('\n');
+
+        let summ = this.cart.map(function(el) {
+            return el.price;
+        }).reduce(function(result, price) {
+            return result + price;
+        });
+
+        summ = this.roundTo(summ);
+
+        infoList += `\n===============\nИтоговая стоимость товаров: $${summ}`;
+        infoList += `\nНа вашем счету: $${this.money}`;
+        infoList += `\n\nКупи?`;
+
+        let cond = confirm(infoList);
+
+        if (cond) {
+            let check = this.money - summ;
+
+            if (check >= 0) {
+                this.money = this.money - summ;
+                this.clearCart();
+                return `Списание денег со счета прошло успешно! На вашем счету: $${this.roundTo(this.money)}`;
+            } else {
+                return `На вашем счету недостаточно денег! Стоимость товаров превышает ваш счет на $${this.roundTo(Math.abs(check))}`;
+            }
+        }
+    },
+
+    calcDiscount() {
+        let sameCategory = [];
+
+        this.cart.forEach(function(el) {
+            let cat = el.category;
+
+            if (!sameCategory.length) {
+                sameCategory.push([cat, 1]);
+            } else {
+                let item = sameCategory.find(function(el) {
+                    return el[0] == cat;
+                });
+
+                if (item) {
+                    item[1]++;
+                } else {
+                    sameCategory.push([cat, 1]);
+                }
+            }
+        });
+
+        let filtered = sameCategory.filter(function(el) {
+            return el[1] >= 3;
+        });
+
+        this.cart.forEach(function(good) {
+            let check = filtered.some(function(el) {
+                return el[0] == good.category;
+            });
+
+            if (check) {
+                let price = good.price * (1 - this.discount);
+                good.price = this.roundTo(price);
+            }
+        });
+    }
 };
 
 objectShop.user = prompt('Добрый день, представьтесь пожалуйста :)') || 'Сеньор(-ита)';
-console.log(objectShop.user);
+console.log('Привет ' + objectShop.user + '!');
 
 console.log(objectShop.showList());
 
+console.log(objectShop.addToCart('1tgy'));
+console.log(objectShop.addToCart('xcds'));
+console.log(objectShop.addToCart('xcds'));
+console.log(objectShop.addToCart('xcds'));
+console.log(objectShop.addToCart('xcds'));
+console.log(objectShop.addToCart('IVAN'));
+console.log(objectShop.addToCart('zg82'));
+console.log(objectShop.showCart());
 
-
-
-
-
-// function removeFromCart(id) {
-//     let item = cart.find(function(goodId) {
-//         return goodId[0] == id;
-//     });
-//     let index = cart.indexOf(item);
-
-//     cart.splice(index, 1);
-// }
-
-// function clearCart() {
-//     cart = [];
-// }
-
-// function showCart() {
-//     return cart;
-// }
-
-// function cupit() {
-//     let infoList = cart.map(function(good) {
-//        return `${good[2]} | $${good[3]}`;
-//     }).join('\n');
-
-//     calcDiscount();
-
-//     let summ = cart.map(function(price) {
-//         return price[3];
-//     }).reduce(function(result, price) {
-//         return result + price;
-//     });
-
-//     summ = roundTo(summ);
-
-//     infoList += `\n===============\nИтоговая стоимость товаров: $${summ}`;
-//     infoList += `\nНа вашем счету: $${money}`;
-//     infoList += `\n\nКупи?`;
-
-//     let cond = confirm(infoList);
-
-//     if (cond) {
-//         let check = money - summ;
-
-//         if (check >= 0) {
-//             money -= summ;
-//             clearCart();
-//             return `Списание денег со счета прошло успешно!\nНа вашем счету: $${roundTo(money)}`;
-//         } else {
-//             return `На вашем счету недостаточно денег! Стоимость товаров превышает ваш счет на $${roundTo(Math.abs(check))}`;
-//         }
-//     }
-// }
-
-// function roundTo(num, n = 2) {
-//     return Math.round( num * (10 ** parseInt(n)) ) / (10 ** parseInt(n));
-// }
-
-// function calcDiscount() {
-//     let sameCategory = [];
-
-//     cart.forEach(function(good) {
-//         let cat = good[1];
-
-//         if (!sameCategory.length) {
-//             sameCategory.push([cat, 1]);
-//         } else {
-//             let item = sameCategory.find(function(el, i, arr) {
-//                 return el[0] == cat;
-//             });
-
-//             if (item) {
-//                 item[1]++;
-//             } else {
-//                 sameCategory.push([cat, 1]);
-//             }
-//         }
-//     });
-
-//     let filtered = sameCategory.filter(function(el) {
-//         return el[1] >= 3;
-//     });
-
-//     cart.forEach(function(good) {
-//         let check = filtered.some(function(filter) {
-//             return filter[0] == good[1];
-//         });
-
-//         if (check) {
-//             let price = good[3] * (1 - discount);
-//             good[3] = roundTo(price);
-//         }
-//     });
-// }
-
-// addToCart('xcds');
-// addToCart('xcds');
-
-// addToCart('IVAN'); 
-// addToCart('IVAN');
-// addToCart('IVAN');
-// addToCart('IVAN');
-
-// addToCart('n6ba');
-// addToCart('n6ba');
-// addToCart('n6ba');
-
-// addToCart('1tgy');
-
-// calcDiscount();
-
+console.log(objectShop.cupit());
