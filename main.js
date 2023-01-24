@@ -114,11 +114,7 @@ const objectShop = {
         });
 
         if (item) {
-            // TODO: check this after cart summ, we maped item, because link [] = link [], but now its an object
-            // this.cart.push(item.map(function(el) {
-            //     return el;
-            // }));
-            this.cart.push(item);
+            this.cart.push({...item});
             return `В корзину добавлен товар '${item.name}'`;
         } else {
             return 'Товар не найден!';
@@ -186,6 +182,7 @@ const objectShop = {
     },
 
     calcDiscount() {
+        that = this;
         let sameCategory = [];
 
         this.cart.forEach(function(el) {
@@ -216,8 +213,8 @@ const objectShop = {
             });
 
             if (check) {
-                let price = good.price * (1 - this.discount);
-                good.price = this.roundTo(price);
+                let price = good.price * (1 - that.discount);
+                good.price = that.roundTo(price);
             }
         });
     }
