@@ -88,24 +88,33 @@ const objectShop = {
             name: 'Футболка розовая', 
             price: 40
         },
-    ],
 
+        {
+            id: 'alko', 
+            category: 'Алкоголь', 
+            name: 'Glenfiddich 12', 
+            price: 40
+        }
+    ],
+    
     showList: function(category) {
         let list;
 
         if (!category) { 
-            list = this.goods; 
+            console.log(list = this.goods);
         }
         else {
             list = this.goods.filter(function(el, i, arr) {
                 return el.category.toLowerCase() == category.toLowerCase();
             });
 
-            if ( !list.length ) {
-                list = 'Такой категории нет';
+            if ( list.length ) {
+                console.log(list);
+            } else {
+                console.log('Такой категории нет');
             }
         }
-        return list;
+        return this;
     },
 
     addToCart: function(id) {
@@ -115,10 +124,11 @@ const objectShop = {
 
         if (item) {
             this.cart.push({...item});
-            return `В корзину добавлен товар '${item.name}'`;
+            console.log(`В корзину добавлен товар '${item.name}'`);
         } else {
-            return 'Товар не найден!';
+            console.log('Товар не найден!');
         }
+        return this;
     },
 
     removeFromCart: function(id) {
@@ -128,19 +138,21 @@ const objectShop = {
         
         let index = this.cart.indexOf(item);
 
-        if(index >=0) {
+        if(index >= 0) {
             this.cart.splice(index, 1);
         } else {
-            return 'Такого товара нет в корзине, повторите запрос!'
+            console.log('Такого товара нет в корзине, повторите запрос!');
         }
+        return this;
     },
 
     clearCart() {
-        this.cart = [];
+        return this.cart = [];
     },
 
     showCart() {
-        return this.cart;
+        console.log(this.cart);
+        return this;
     },
 
     roundTo(num, n = 2) {
@@ -174,11 +186,12 @@ const objectShop = {
             if (check >= 0) {
                 this.money = this.money - summ;
                 this.clearCart();
-                return `Списание денег со счета прошло успешно! На вашем счету: $${this.roundTo(this.money)}`;
+                console.log(`Списание денег со счета прошло успешно! На вашем счету: $${this.roundTo(this.money)}`);
             } else {
-                return `На вашем счету недостаточно денег! Стоимость товаров превышает ваш счет на $${this.roundTo(Math.abs(check))}`;
+                console.log (`На вашем счету недостаточно денег! Стоимость товаров превышает ваш счет на $${this.roundTo(Math.abs(check))}`);
             }
         }
+        return this;
     },
 
     calcDiscount() {
@@ -223,15 +236,6 @@ const objectShop = {
 objectShop.user = prompt('Добрый день, представьтесь пожалуйста :)') || 'Сеньор(-ита)';
 console.log('Привет ' + objectShop.user + '!');
 
-console.log(objectShop.showList());
-
-console.log(objectShop.addToCart('1tgy'));
-console.log(objectShop.addToCart('xcds'));
-console.log(objectShop.addToCart('xcds'));
-console.log(objectShop.addToCart('xcds'));
-console.log(objectShop.addToCart('xcds'));
-console.log(objectShop.addToCart('IVAN'));
-console.log(objectShop.addToCart('zg82'));
-console.log(objectShop.showCart());
-
-console.log(objectShop.cupit());
+objectShop.showList();
+objectShop.addToCart('1tgy').addToCart('xcds').addToCart('xcds').addToCart('xcds').addToCart('xcds').addToCart('IVAN').addToCart('zg82');
+objectShop.showCart().cupit();
